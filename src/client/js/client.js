@@ -2,7 +2,7 @@ var board,
     game = new Chess(),
     statusEl = $('#status'),
     fenEl = $('#fen'),
-    pgnEl = $('#pgn');
+    loadFenButtonEl = $('#loadFenButton');
 
 // do not pick up pieces if the game is over
 // only pick up pieces for the side to move
@@ -64,7 +64,6 @@ var updateStatus = function () {
 
     statusEl.html(status);
     fenEl.html(game.fen());
-    pgnEl.html(game.pgn());
 };
 
 var cfg = {
@@ -77,3 +76,10 @@ var cfg = {
 board = ChessBoard('board', cfg);
 
 updateStatus();
+
+loadFenButtonEl.click(function() {
+    var fen = prompt('FEN Notation');
+    if (!game.load(fen)) return;
+    board.position(fen);
+    updateStatus();
+});
