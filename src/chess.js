@@ -1,36 +1,6 @@
 /*
- * Copyright (c) 2016, Jeff Hlywa (jhlywa@gmail.com)
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- *----------------------------------------------------------------------------*/
-
-/* minified license below  */
-
-/* @license
- * Copyright (c) 2016, Jeff Hlywa (jhlywa@gmail.com)
- * Released under the BSD license
- * https://github.com/jhlywa/chess.js/blob/master/LICENSE
+ * Forked chess.js
+ * Original work: https://github.com/jhlywa/chess.js
  */
 
 var Chess = function(fen) {
@@ -145,6 +115,11 @@ var Chess = function(fen) {
     a2:  96, b2:  97, c2:  98, d2:  99, e2: 100, f2: 101, g2: 102, h2: 103,
     a1: 112, b1: 113, c1: 114, d1: 115, e1: 116, f1: 117, g1: 118, h1: 119
   };
+
+  const INDEXES = {};
+  for (let square in SQUARES) {
+      INDEXES[SQUARES[square]] = square;
+  }
 
   var ROOKS = {
     w: [{square: SQUARES.a1, flag: BITS.QSIDE_CASTLE},
@@ -687,6 +662,11 @@ var Chess = function(fen) {
     return move.replace(/=/,'').replace(/[+#]?[?!]*$/,'');
   }
 
+
+  /**
+   * color -> attacker color
+   * square -> target square index
+   */
   function attacked(color, square) {
     for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
       /* did we run off the end of the board */
@@ -1058,6 +1038,46 @@ var Chess = function(fen) {
     return s;
   }
 
+  function materials() {
+    const rv = {
+      [WHITE]: {
+        [PAWN]: [],
+        [KNIGHT]: [],
+        [BISHOP]: [],
+        [ROOK]: [],
+        [QUEEN]: [],
+        [KING]: null
+      },
+      [BLACK]: {
+        [PAWN]: [],
+        [KNIGHT]: [],
+        [BISHOP]: [],
+        [ROOK]: [],
+        [QUEEN]: [],
+        [KING]: null
+      }
+    };
+
+    for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
+      /* empty piece */
+      if (board[i] == null)
+        continue;
+
+      const piece = board[i].type;
+      const color = board[i].color;
+
+      if (piece == KING) {
+        // rv[color][piece] = i;
+        rv[color][piece] = INDEXES[i];
+      } else {
+        // rv[color][piece].push(i);
+        rv[color][piece].push(INDEXES[i]);
+      }
+    }
+
+    return rv;
+  }
+
   // convert a move from Standard Algebraic Notation (SAN) to 0x88 coordinates
   function move_from_san(move, sloppy) {
     // strip off any move decorations: e.g Nf3+?!
@@ -1194,20 +1214,22 @@ var Chess = function(fen) {
     ROOK: ROOK,
     QUEEN: QUEEN,
     KING: KING,
-    SQUARES: (function() {
-                /* from the ECMA-262 spec (section 12.6.4):
-                 * "The mechanics of enumerating the properties ... is
-                 * implementation dependent"
-                 * so: for (var sq in SQUARES) { keys.push(sq); } might not be
-                 * ordered correctly
-                 */
-                var keys = [];
-                for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
-                  if (i & 0x88) { i += 7; continue; }
-                  keys.push(algebraic(i));
-                }
-                return keys;
-              })(),
+    // SQUARES: (function() {
+    //             /* from the ECMA-262 spec (section 12.6.4):
+    //              * "The mechanics of enumerating the properties ... is
+    //              * implementation dependent"
+    //              * so: for (var sq in SQUARES) { keys.push(sq); } might not be
+    //              * ordered correctly
+    //              */
+    //             var keys = [];
+    //             for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+    //               if (i & 0x88) { i += 7; continue; }
+    //               keys.push(algebraic(i));
+    //             }
+    //             return keys;
+    //           })(),
+    SQUARES: SQUARES,
+    INDEXES: INDEXES,
     FLAGS: FLAGS,
 
     /***************************************************************************
@@ -1245,6 +1267,10 @@ var Chess = function(fen) {
       }
 
       return moves;
+    },
+
+    attacked: function(color, square) {
+      return attacked(color, square);
     },
 
     in_check: function() {
@@ -1514,6 +1540,10 @@ var Chess = function(fen) {
 
     header: function() {
       return set_header(arguments);
+    },
+
+    materials: function() {
+      return materials();
     },
 
     ascii: function() {
