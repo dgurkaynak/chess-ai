@@ -138,6 +138,8 @@ var Chess = function (fen) {
     var history = [];
     var header = {};
 
+    var materialsCache_ = null;
+
     /* if the user passes in a fen string, load it, else default to
      * starting position
      */
@@ -157,6 +159,7 @@ var Chess = function (fen) {
         move_number = 1;
         history = [];
         header = {};
+        materialsCache_ = null;
         update_setup(generate_fen());
     }
 
@@ -414,6 +417,8 @@ var Chess = function (fen) {
             kings[piece.color] = sq;
         }
 
+        materialsCache_ = null;
+
         update_setup(generate_fen());
 
         return true;
@@ -425,6 +430,8 @@ var Chess = function (fen) {
         if (piece && piece.type === KING) {
             kings[piece.color] = EMPTY;
         }
+
+        materialsCache_ = null;
 
         update_setup(generate_fen());
 
@@ -821,6 +828,8 @@ var Chess = function (fen) {
         board[move.to] = board[move.from];
         board[move.from] = null;
 
+        materialsCache_ = null;
+
         /* if ep capture, remove the captured pawn */
         if (move.flags & BITS.EP_CAPTURE) {
             if (turn === BLACK) {
@@ -922,6 +931,8 @@ var Chess = function (fen) {
         board[move.from] = board[move.to];
         board[move.from].type = move.piece;  // to undo any promotions
         board[move.to] = null;
+
+        materialsCache_ = null;
 
         if (move.flags & BITS.CAPTURE) {
             board[move.to] = { type: move.captured, color: them };
@@ -1039,6 +1050,8 @@ var Chess = function (fen) {
     }
 
     function materials() {
+        if (materialsCache_) return materialsCache_;
+
         const rv = {
             [WHITE]: {
                 [PAWN]: [],
@@ -1074,6 +1087,8 @@ var Chess = function (fen) {
                 rv[color][piece].push(INDEXES[i]);
             }
         }
+
+        materialsCache_ = rv;
 
         return rv;
     }
