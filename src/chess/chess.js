@@ -219,7 +219,11 @@ var Chess = function (fen) {
     }
 
     function cloneGame() {
-        return new Chess(generate_fen());
+        var clone = new Chess(generate_fen());
+        history.forEach(function(row) {
+            clone.history_.push(row);
+        });
+        return clone;
     }
 
     /* TODO: this function is pretty much crap - it validates structure but
@@ -1302,16 +1306,6 @@ var Chess = function (fen) {
             return moves;
         },
 
-        next_games: function() {
-            var that = this;
-
-            return this.moves().map(function(move) {
-                var clone = that.clone();
-                clone.move(move);
-                return clone;
-            });
-        },
-
         attacked: function (color, square) {
             return attacked(color, square);
         },
@@ -1680,6 +1674,8 @@ var Chess = function (fen) {
 
             return null;
         },
+
+        history_: history,
 
         history: function (options) {
             var reversed_history = [];
