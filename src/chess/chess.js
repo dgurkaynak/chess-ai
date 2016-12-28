@@ -1080,11 +1080,11 @@ var Chess = function (fen) {
             const color = board[i].color;
 
             if (piece == KING) {
-                // rv[color][piece] = i;
-                rv[color][piece] = INDEXES[i];
+                rv[color][piece] = i;
+                // rv[color][piece] = INDEXES[i];
             } else {
-                // rv[color][piece].push(i);
-                rv[color][piece].push(INDEXES[i]);
+                rv[color][piece].push(i);
+                // rv[color][piece].push(INDEXES[i]);
             }
         }
 
