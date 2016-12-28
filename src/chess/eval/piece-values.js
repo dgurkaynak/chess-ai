@@ -19,4 +19,4 @@ function evalPieceValues(game) {
 }
 
 
-if (typeof exports !== 'undefined') exports = evalPieceValues;
+if (typeof module !== 'undefined') module.exports = evalPieceValues;

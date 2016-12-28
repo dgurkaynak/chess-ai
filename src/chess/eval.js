@@ -6,4 +6,4 @@ function eval(game) {
     return score;
 }
 
-if (typeof exports !== 'undefined') exports = eval;
+if (typeof module !== 'undefined') module.exports = eval;

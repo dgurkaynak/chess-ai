@@ -117,4 +117,4 @@ function evalPieceSquare(game) {
 }
 
 
-if (typeof exports !== 'undefined') exports = evalPieceSquare;
+if (typeof module !== 'undefined') module.exports = evalPieceSquare;

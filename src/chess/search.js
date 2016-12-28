@@ -29,3 +29,6 @@ function search(game, limit, depth) {
 
     return best;
 }
+
+
+if (typeof module !== 'undefined') module.exports = search;
