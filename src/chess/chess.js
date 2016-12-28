@@ -218,6 +218,10 @@ var Chess = function (fen) {
         return true;
     }
 
+    function cloneGame() {
+        return new Chess(generate_fen());
+    }
+
     /* TODO: this function is pretty much crap - it validates structure but
      * completely ignores content (e.g. doesn't verify that each side has a king)
      * ... we should rewrite this, and ditch the silly error_number field while
@@ -1268,8 +1272,8 @@ var Chess = function (fen) {
             return reset();
         },
 
-        fork: function() {
-            return fork();
+        clone: function() {
+            return cloneGame();
         },
 
         moves: function (options) {
@@ -1296,6 +1300,16 @@ var Chess = function (fen) {
             }
 
             return moves;
+        },
+
+        next_games: function() {
+            var that = this;
+
+            return this.moves().map(function(move) {
+                var clone = that.clone();
+                clone.move(move);
+                return clone;
+            });
         },
 
         attacked: function (color, square) {
