@@ -139,6 +139,7 @@ var Chess = function (fen) {
     var header = {};
 
     var materialsCache_ = null;
+    var fenCache_ = null;
 
     /* if the user passes in a fen string, load it, else default to
      * starting position
@@ -160,6 +161,7 @@ var Chess = function (fen) {
         history = [];
         header = {};
         materialsCache_ = null;
+        fenCache_ = null;
         update_setup(generate_fen());
     }
 
@@ -310,6 +312,8 @@ var Chess = function (fen) {
     }
 
     function generate_fen() {
+        if (fenCache_) return fenCache_;
+
         var empty = 0;
         var fen = '';
 
@@ -352,7 +356,9 @@ var Chess = function (fen) {
         cflags = cflags || '-';
         var epflags = (ep_square === EMPTY) ? '-' : algebraic(ep_square);
 
-        return [fen, turn, cflags, epflags, half_moves, move_number].join(' ');
+        fenCache_ = [fen, turn, cflags, epflags, half_moves, move_number].join(' ');
+
+        return fenCache_;
     }
 
     function set_header(args) {
@@ -418,6 +424,7 @@ var Chess = function (fen) {
         }
 
         materialsCache_ = null;
+        fenCache_ = null;
 
         update_setup(generate_fen());
 
@@ -432,6 +439,7 @@ var Chess = function (fen) {
         }
 
         materialsCache_ = null;
+        fenCache_ = null; // TODO: Generate fen below?
 
         update_setup(generate_fen());
 
@@ -829,6 +837,7 @@ var Chess = function (fen) {
         board[move.from] = null;
 
         materialsCache_ = null;
+        fenCache_ = null;
 
         /* if ep capture, remove the captured pawn */
         if (move.flags & BITS.EP_CAPTURE) {
@@ -933,6 +942,7 @@ var Chess = function (fen) {
         board[move.to] = null;
 
         materialsCache_ = null;
+        fenCache_ = null;
 
         if (move.flags & BITS.CAPTURE) {
             board[move.to] = { type: move.captured, color: them };
@@ -1256,6 +1266,10 @@ var Chess = function (fen) {
 
         reset: function () {
             return reset();
+        },
+
+        fork: function() {
+            return fork();
         },
 
         moves: function (options) {
