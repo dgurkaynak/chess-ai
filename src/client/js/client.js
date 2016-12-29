@@ -29,10 +29,11 @@ var onDrop = function (source, target) {
 
     if (!game.game_over() && game.turn() == 'b') {
         setTimeout(function() {
-            var result = search(game, 2);
+            console.time('search');
+            var result = search2(game, {depthLimit: 2});
+            console.timeEnd('search');
             if (!result) return;
-            var history = result[1].history();
-            var move = history[history.length - result[2]];
+            var move = result.history[0];
             console.log(result, move);
             game.move(move);
             board.position(game.fen());
