@@ -9,7 +9,7 @@ function search(game, limit, alpha, beta, depth) {
         if (game.in_draw()) {
             return [0, game, depth];
         } else if (game.in_checkmate()) {
-            return [Infinity * color, game, depth];
+            return [-Infinity, game, depth];
         }
 
         throw new Error('Unhandled end game');
