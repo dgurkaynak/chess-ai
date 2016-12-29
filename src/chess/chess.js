@@ -221,7 +221,7 @@ var Chess = function (fen) {
     function cloneGame() {
         var clone = new Chess(generate_fen());
         history.forEach(function(row) {
-            clone.history_.push(row);
+            clone.history_.push(_.cloneDeep(row));
         });
         return clone;
     }
