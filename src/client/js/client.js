@@ -26,6 +26,20 @@ var onDrop = function (source, target) {
     if (move === null) return 'snapback';
 
     updateStatus();
+
+    if (!game.game_over() && game.turn() == 'b') {
+        setTimeout(function() {
+            var result = search(game, 2);
+            if (!result) return;
+            var history = result[1].history();
+            var move = history[history.length - result[2]];
+            console.log(result, move);
+            game.move(move);
+            board.position(game.fen());
+            updateStatus();
+        }, 100);
+    }
+
 };
 
 // update the board position after the piece snap
