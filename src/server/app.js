@@ -11,7 +11,7 @@ const game = new Chess();
 
 console.time('search');
 // const r = search(game, 4);
-const r = search2(game, {depthLimit: 4});
+const r = search2(game, {depthLimitSoft: 4});
 console.timeEnd('search');
 
 console.log(r);

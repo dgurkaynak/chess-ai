@@ -2,11 +2,15 @@ function search2(game, options) {
     options = _.assign({
         history: [],
         depth: 0,
-        depthLimit: 2,
+        depthLimitSoft: 2,
+        depthLimitHard: undefined,
         alpha: -Infinity,
         beta: Infinity,
         i: 0
     }, options);
+
+    if (_.isUndefined(options.depthLimitHard))
+        options.depthLimitHard = options.depthLimitSoft + 2;
 
     var color = game.turn() == 'w' ? 1 : -1;
 
@@ -20,8 +24,11 @@ function search2(game, options) {
         throw new Error('Unhandled end game');
     }
 
+    if (game.in_check()) {
+        options.depthLimitSoft = Math.min(options.depthLimitSoft + 2, options.depthLimitHard);
+    }
 
-    if (options.depth == options.depthLimit)
+    if (options.depth >= options.depthLimitSoft)
         return _.assign({score: eval(game) * color}, options);
 
     var moves = game.moves();
@@ -37,7 +44,8 @@ function search2(game, options) {
         var result = search2(game, _.assign({}, options, {
             history: newHistory,
             depth: options.depth + 1,
-            depthLimit: options.depthLimit, // TODO: Increase this if critical?
+            depthLimitSoft: options.depthLimitSoft,
+            depthLimitHard: options.depthLimitHard,
             alpha: options.beta * -1,
             beta: options.alpha * -1,
             i: options.i + 1
