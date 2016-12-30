@@ -5,8 +5,7 @@ function search2(game, options) {
         depthLimitSoft: 2,
         depthLimitHard: undefined,
         alpha: -Infinity,
-        beta: Infinity,
-        i: 0
+        beta: Infinity
     }, options);
 
     if (_.isUndefined(options.depthLimitHard))
@@ -14,14 +13,40 @@ function search2(game, options) {
 
     var color = game.turn == 'w' ? 1 : -1;
 
-    if (game.isGameOver()) {
-        if (game.isDraw()) {
-            return _.assign({score: 0}, options);
-        } else if (game.isCheckmate()) {
-            return _.assign({score: -Infinity}, options);
+    let moves = [];
+    const validMoves = [];
+
+    game.forEachPiece((piece, square) => {
+        if (piece.color != game.turn) return;
+        moves = moves.concat(game.generatePieceMoves(square));
+    });
+
+    for (let i in moves) {
+        const move = moves[i];
+        const us = game.turn;
+
+        game.move(move);
+        const isValid = !game.isKingAttacked(us);
+
+        if (!isValid) {
+            game.undo();
+            continue;
         }
 
-        throw new Error('Unhandled end game');
+        // move.score = eval(game) * color;
+        validMoves.push(move);
+        game.undo();
+    }
+
+    // If game is ended
+    if (validMoves.length == 0) {
+        if (game.isCheck()) {
+            return _.assign({score: -Infinity}, options);
+        } else {
+            return _.assign({score: 0}, options);
+        }
+    } else if (game.isInsufficientMaterial()) {
+        return _.assign({score: 0}, options);
     }
 
     if (game.isCheck()) {
@@ -31,30 +56,27 @@ function search2(game, options) {
     if (options.depth >= options.depthLimitSoft)
         return _.assign({score: eval(game) * color}, options);
 
-    var moves = game.generateAllTurnMoves();
-    var best = null;
+    let best = null;
 
-    for (var i in moves) {
-        var move = moves[i];
+    // TODO: Order by best maybe?
+
+    for (let i in validMoves) {
+        const move = validMoves[i];
         game.move(move);
 
-        var newHistory = options.history.slice();
+        const newHistory = options.history.slice();
         newHistory.push(move);
 
-        var result = search2(game, _.assign({}, options, {
+        const result = search2(game, _.assign({}, options, {
             history: newHistory,
             depth: options.depth + 1,
             depthLimitSoft: options.depthLimitSoft,
             depthLimitHard: options.depthLimitHard,
             alpha: options.beta * -1,
-            beta: options.alpha * -1,
-            i: options.i + 1
+            beta: options.alpha * -1
         }));
 
         game.undo();
-
-        if (!result)
-            continue;
 
         result.score = -1 * result.score;
 
