@@ -8,19 +8,7 @@ global.search2 = require('../chess/search2');
 
 const Chess = require('../chess/chess2');
 const game = new Chess();
-console.log(game.ascii());
 
-_.times(25, () => {
-    const moves = game.generateAllTurnMoves();
-    game.move(_.sample(moves));
-    console.log(game.ascii());
-});
-
-
-// console.time('search');
-// console.log(search2(game, {depthLimitSoft: 4}));
-// console.timeEnd('search');
-
-// console.time('search');
-// console.log(search2(game, {depthLimitSoft: 4}));
-// console.timeEnd('search');
+console.time('search');
+console.log(search2(game, {depthLimitSoft: 4}));
+console.timeEnd('search');
