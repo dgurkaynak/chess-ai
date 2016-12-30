@@ -30,7 +30,7 @@ var onDrop = function (source, target) {
     if (!game.game_over() && game.turn() == 'b') {
         setTimeout(function() {
             console.time('search');
-            var result = search2(game, {depthLimitSoft: 2});
+            var result = search2(game, {depthLimitSoft: 3, depthLimitHard: 4});
             console.timeEnd('search');
             if (!result) return;
             var move = result.history[0];
