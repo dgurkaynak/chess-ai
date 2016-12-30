@@ -98,17 +98,17 @@ function mirrorPST(arr) {
 
 
 function evalPieceSquare(game) {
-    var materials = game.materials();
+    var scores = ['w', 'b'].map((color) => {
+        return ['p', 'n', 'b', 'r', 'q', 'k'].reduce((sum, piece) => {
+            let squares = game.pieces[piece][color];
 
-    var scores = _.map(['w', 'b'], function(color) {
-        return _.reduce(materials[color], function(result, indexes, piece) {
             if (piece == 'k') {
-                piece = 'km'; // TODO: Get game phase
-                indexes = [indexes];
+                squares = [game.pieces.k[color]];
+                piece = 'ke';
             }
 
-            return result + _.reduce(indexes, function(sum, index) {
-                return sum + PST[piece][color][index];
+            return sum + squares.reduce((sum, square) => {
+                return sum + PST[piece][color][square];
             }, 0);
         }, 0);
     });

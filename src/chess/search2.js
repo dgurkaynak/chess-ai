@@ -12,26 +12,26 @@ function search2(game, options) {
     if (_.isUndefined(options.depthLimitHard))
         options.depthLimitHard = options.depthLimitSoft + 2;
 
-    var color = game.turn() == 'w' ? 1 : -1;
+    var color = game.turn == 'w' ? 1 : -1;
 
-    if (game.game_over()) {
-        if (game.in_draw()) {
+    if (game.isGameOver()) {
+        if (game.isDraw()) {
             return _.assign({score: 0}, options);
-        } else if (game.in_checkmate()) {
+        } else if (game.isCheckmate()) {
             return _.assign({score: -Infinity}, options);
         }
 
         throw new Error('Unhandled end game');
     }
 
-    if (game.in_check()) {
+    if (game.isCheck()) {
         options.depthLimitSoft = Math.min(options.depthLimitSoft + 2, options.depthLimitHard);
     }
 
     if (options.depth >= options.depthLimitSoft)
         return _.assign({score: eval(game) * color}, options);
 
-    var moves = game.moves();
+    var moves = game.generateAllTurnMoves();
     var best = null;
 
     for (var i in moves) {

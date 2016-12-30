@@ -1,5 +1,5 @@
 var board,
-    game = new Chess(),
+    game = new Chess2(),
     statusEl = $('#status'),
     fenEl = $('#fen'),
     loadFenButtonEl = $('#loadFenButton');
@@ -7,27 +7,28 @@ var board,
 // do not pick up pieces if the game is over
 // only pick up pieces for the side to move
 var onDragStart = function (source, piece, position, orientation) {
-    if (game.game_over() === true ||
-        (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+    return true;
+    if (game.isGameOver() === true ||
+        (game.turn === 'w' && piece.search(/^b/) !== -1) ||
+        (game.turn === 'b' && piece.search(/^w/) !== -1)) {
         return false;
     }
 };
 
 var onDrop = function (source, target) {
     // see if the move is legal
-    var move = game.move({
-        from: source,
-        to: target,
+    var move = game.move_({
+        from: Chess2.SQUARES[source],
+        to: Chess2.SQUARES[target],
         promotion: 'q' // NOTE: always promote to a queen for example simplicity
     });
 
     // illegal move
-    if (move === null) return 'snapback';
+    if (!move) return 'snapback';
 
     updateStatus();
 
-    if (!game.game_over() && game.turn() == 'b') {
+    if (!game.isGameOver() && game.turn == 'b') {
         setTimeout(function() {
             console.time('search');
             var result = search2(game, {depthLimitSoft: 3, depthLimitHard: 4});
@@ -36,9 +37,9 @@ var onDrop = function (source, target) {
             var move = result.history[0];
             console.log(result, move);
             game.move(move);
-            board.position(game.fen());
+            board.position(game.generateFen());
             updateStatus();
-        }, 100);
+        }, 500);
     }
 
 };
@@ -46,24 +47,24 @@ var onDrop = function (source, target) {
 // update the board position after the piece snap
 // for castling, en passant, pawn promotion
 var onSnapEnd = function () {
-    board.position(game.fen());
+    board.position(game.generateFen());
 };
 
 var updateStatus = function () {
     var status = '';
 
     var moveColor = 'White';
-    if (game.turn() === 'b') {
+    if (game.turn === 'b') {
         moveColor = 'Black';
     }
 
     // checkmate?
-    if (game.in_checkmate() === true) {
+    if (game.isCheckmate() === true) {
         status = 'Game over, ' + moveColor + ' is in checkmate.';
     }
 
     // draw?
-    else if (game.in_draw() === true) {
+    else if (game.isDraw() === true) {
         status = 'Game over, drawn position';
     }
 
@@ -72,13 +73,13 @@ var updateStatus = function () {
         status = moveColor + ' to move';
 
         // check?
-        if (game.in_check() === true) {
+        if (game.isCheck() === true) {
             status += ', ' + moveColor + ' is in check';
         }
     }
 
     statusEl.html(status);
-    fenEl.html(game.fen());
+    fenEl.html(game.generateFen());
 };
 
 var cfg = {

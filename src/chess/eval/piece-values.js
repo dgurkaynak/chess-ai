@@ -10,12 +10,11 @@ var pieceValues = {
 
 
 function evalPieceValues(game) {
-    var materials = game.materials();
-    return (pieceValues.p * (materials.w.p.length - materials.b.p.length)) +
-        (pieceValues.n * (materials.w.n.length - materials.b.n.length)) +
-        (pieceValues.b * (materials.w.b.length - materials.b.b.length)) +
-        (pieceValues.r * (materials.w.r.length - materials.b.r.length)) +
-        (pieceValues.q * (materials.w.q.length - materials.b.q.length));
+    return (pieceValues.p * (game.pieces.p.w.length - game.pieces.p.b.length)) +
+        (pieceValues.n * (game.pieces.n.w.length - game.pieces.n.b.length)) +
+        (pieceValues.b * (game.pieces.b.w.length - game.pieces.b.b.length)) +
+        (pieceValues.r * (game.pieces.r.w.length - game.pieces.r.b.length)) +
+        (pieceValues.q * (game.pieces.q.w.length - game.pieces.q.b.length));
 }
 
 
