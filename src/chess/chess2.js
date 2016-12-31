@@ -751,7 +751,9 @@ class Chess2 {
         if (move.flags & BITS.CAPTURE) {
             this.removePiece(move.to);
             this.putPiece({ type: move.captured, color: them }, move.to);
-        } else if (move.flags & BITS.EP_CAPTURE) {
+        }
+
+        if (move.flags & BITS.EP_CAPTURE) {
             let index;
 
             if (us === BLACK) {
@@ -761,7 +763,9 @@ class Chess2 {
             }
 
             this.putPiece({ type: PAWN, color: them }, index);
-        } else if (move.flags & BITS.PROMOTION) {
+        }
+
+        if (move.flags & BITS.PROMOTION) {
             this.removePiece(move.from);
             this.putPiece({ type: move.piece, color: us }, move.from);
         }
