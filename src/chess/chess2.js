@@ -132,10 +132,12 @@ const ROOKS = {
 /**
  * Helper functions
  */
+// Horizontal row number
 function rank(i) {
     return i >> 4;
 }
 
+// Vertical column number (0 => a, 1=> b, ...)
 function file(i) {
     return i & 15;
 }

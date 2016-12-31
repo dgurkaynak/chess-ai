@@ -67,6 +67,8 @@ function search2(game, options) {
         const newHistory = options.history.slice();
         newHistory.push(move);
 
+        // If move is capture go deeper!
+
         const result = search2(game, _.assign({}, options, {
             history: newHistory,
             depth: options.depth + 1,
