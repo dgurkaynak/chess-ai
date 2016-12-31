@@ -54,7 +54,7 @@ function search2(game, options) {
     }
 
     if (options.depth >= options.depthLimitSoft)
-        return _.assign({score: eval(game) * color}, options);
+        return _.assign({score: eval2(game) * color}, options);
 
     let best = null;
 
