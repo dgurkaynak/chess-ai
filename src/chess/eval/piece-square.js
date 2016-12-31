@@ -104,7 +104,7 @@ function evalPieceSquare(game) {
 
             if (piece == 'k') {
                 squares = [game.pieces.k[color]];
-                piece = 'ke';
+                piece = 'km';
             }
 
             return sum + squares.reduce((sum, square) => {
