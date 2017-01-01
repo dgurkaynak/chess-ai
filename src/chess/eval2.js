@@ -505,6 +505,55 @@ function eval2(game) {
         });
     });
 
+    /**
+     * Queen
+     */
+    ['w', 'b'].forEach(color => {
+        const us = color;
+        const them = Chess2.swap_color(us);
+
+        game.pieces.q[us].forEach(square => {
+            const moves = game.generatePieceMoves(square);
+            let mobility = 0;
+            let kingAttacks = 0;
+
+            // 7th row bonus
+            const seventhRowRank = relativeRank(6, us);
+            if (Chess2.rank(square) == seventhRowRank &&
+                (game.pawnCountsByRank[them][seventhRowRank] > 0 || Chess2.rank(game.pieces.k[them]) == relativeRank(7, us))) {
+                mgMobility[us] += 20;
+                egMobility[us] += 30;
+            }
+
+            // Penalty for early development
+            const secondRowRank = relativeRank(1, us);
+            if ((us == 'w' && Chess2.rank(square) < secondRowRank) ||
+                (us == 'b' && Chess2.rank(square) > secondRowRank)) {
+                if (game.checkPiece(relativeSquare(113, us), us, 'n')) positionalThemes[us] -= 2;
+                if (game.checkPiece(relativeSquare(114, us), us, 'b')) positionalThemes[us] -= 2;
+                if (game.checkPiece(relativeSquare(117, us), us, 'b')) positionalThemes[us] -= 2;
+                if (game.checkPiece(relativeSquare(118, us), us, 'n')) positionalThemes[us] -= 2;
+            }
+
+            moves.forEach(move => {
+                mobility++;
+                if (game.squaresNearKing[them].indexOf(move.to)) kingAttacks++;
+            });
+
+            mgMobility[us] += 1 * (mobility - 14);
+            egMobility[us] += 2 * (mobility - 14);
+
+            if (kingAttacks > 0) {
+                attackerCount[us]++;
+                attackWeight[us] += 4 * kingAttacks;
+            }
+
+            const tropism = getTropism(square, game.pieces.k[them]);
+            mgTropism[us] += 2 * tropism;
+            egTropism[us] += 4 * tropism;
+        });
+    });
+
 
     // Calculate result
     phase = Math.min(phase, 24);
