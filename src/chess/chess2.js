@@ -128,6 +128,19 @@ const ROOKS = {
     { square: SQUARES.h8, flag: BITS.KSIDE_CASTLE }]
 };
 
+const V = {
+    NORTH: 16,
+    NN: 32,
+    SOUTH: -16,
+    SS: -32,
+    EAST: 1,
+    WEST: -1,
+    NE: 17,
+    SW: -17,
+    NW: 15,
+    SE: -15
+};
+
 
 /**
  * Helper functions
@@ -183,6 +196,7 @@ class Chess2 {
         this.halfMoves = 0;
         this.moveNumber = 1;
         this.history = [];
+        this.squaresNearKing = {[WHITE]: [], [BLACK]: []};
     }
 
 
@@ -301,7 +315,8 @@ class Chess2 {
         this.board[square] = piece;
 
         if (piece.type == KING) {
-            this.pieces[piece.type][piece.color] = square;
+            this.pieces[KING][piece.color] = square;
+            this.setSquaresNearKing(piece, square);
         } else {
             this.pieces[piece.type][piece.color].push(square);
         }
@@ -315,7 +330,8 @@ class Chess2 {
         this.board[square] = null;
 
         if (piece.type == KING) {
-            this.pieces[piece.type][piece.color] = EMPTY;
+            this.pieces[KING][piece.color] = EMPTY;
+            this.squaresNearKing[piece.color] = [];
         } else {
             const pieces = this.pieces[piece.type][piece.color];
             const index = pieces.indexOf(square);
@@ -332,7 +348,8 @@ class Chess2 {
         this.board[to] = piece;
 
         if (piece.type == KING) {
-            this.pieces[piece.type][piece.color] = to;
+            this.pieces[KING][piece.color] = to;
+            this.setSquaresNearKing(piece, to);
         } else {
             const pieces = this.pieces[piece.type][piece.color];
             const index = pieces.indexOf(from);
@@ -349,6 +366,36 @@ class Chess2 {
             if (!piece) continue;
             callback(piece, i);
         }
+    }
+
+
+    setSquaresNearKing(piece, square) {
+        // if (piece.type != KING) return;
+
+        this.squaresNearKing[piece.color] = [
+            square + V.NORTH,
+            square + V.SOUTH,
+            square + V.EAST,
+            square + V.WEST,
+            square + V.NW,
+            square + V.NE,
+            square + V.SW,
+            square + V.SE
+        ].concat(
+            piece.color == WHITE ?
+            [
+                square + V.NN,
+                square + V.NORTH + V.NE,
+                square + V.NORTH + V.NW
+            ] :
+            [
+                square + V.SS,
+                square + V.SOUTH + V.SE,
+                square + V.SOUTH + V.SW
+            ]
+        ).filter(square => {
+            return rank(square) < 8 && file(square) < 8;
+        });
     }
 
 
