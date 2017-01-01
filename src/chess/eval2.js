@@ -454,7 +454,56 @@ function eval2(game) {
     /**
      * Rook
      */
+    ['w', 'b'].forEach(color => {
+        const us = color;
+        const them = Chess2.swap_color(us);
 
+        game.pieces.r[us].forEach(square => {
+            const moves = game.generatePieceMoves(square);
+            let mobility = 0;
+            let kingAttacks = 0;
+
+            // 7th row bonus
+            const seventhRowRank = relativeRank(6, us);
+            if (Chess2.rank(square) == seventhRowRank &&
+                (game.pawnCountsByRank[them][seventhRowRank] > 0 || Chess2.rank(game.pieces.k[them]) == relativeRank(7, us))) {
+                mgMobility[us] += 20;
+                egMobility[us] += 30;
+            }
+
+            // Open column bonus
+            const fileCount = Chess2.file(square);
+            if (game.pawnCountsByFile[us][fileCount] == 0) {
+                if (game.pawnCountsByFile[them][fileCount] == 0) {
+                    mgMobility[us] += ROOK_OPEN_BONUS;
+                    egMobility[us] += ROOK_OPEN_BONUS;
+                    if (Math.abs(fileCount - Chess2.file(game.pieces.k[them])) < 2) attackWeight[us] += 1;
+                } else {
+                    mgMobility[us] += ROOK_HALF_BONUS;
+                    egMobility[us] += ROOK_HALF_BONUS;
+                    if (Math.abs(fileCount - Chess2.file(game.pieces.k[them])) < 2) attackWeight[us] += 2;
+                }
+            }
+
+
+            moves.forEach(move => {
+                mobility++;
+                if (game.squaresNearKing[them].indexOf(move.to)) kingAttacks++;
+            });
+
+            mgMobility[us] += 2 * (mobility - 7);
+            egMobility[us] += 3 * (mobility - 7);
+
+            if (kingAttacks > 0) {
+                attackerCount[us]++;
+                attackWeight[us] += 3 * kingAttacks;
+            }
+
+            const tropism = getTropism(square, game.pieces.k[them]);
+            mgTropism[us] += 2 * tropism;
+            egTropism[us] += 1 * tropism;
+        });
+    });
 
 
     // Calculate result
@@ -493,6 +542,11 @@ function relativeSquare(i, color) {
 
 function getTropism(from, to) {
     return 7 - Math.abs(Chess2.rank(from) - Chess2.rank(to)) + Math.abs(Chess2.file(from) - Chess2.file(to))
+}
+
+function relativeRank(rank, color) {
+    if (color == 'b') return rank;
+    return 7 - rank;
 }
 
 
