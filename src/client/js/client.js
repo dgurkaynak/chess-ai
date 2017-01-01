@@ -95,7 +95,7 @@ updateStatus();
 
 loadFenButtonEl.click(function() {
     var fen = prompt('FEN Notation');
-    if (!game.load(fen)) return;
+    if (!game.loadFen(fen)) return;
     board.position(fen);
     updateStatus();
 });
