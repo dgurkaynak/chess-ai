@@ -185,7 +185,6 @@ class Chess2 {
 
     clear() {
         this.board = new Array(128);
-        this.kings = { [WHITE]: EMPTY, [BLACK]: EMPTY };
         this.pieces = {
             [KING]: { [WHITE]: EMPTY, [BLACK]: EMPTY },
             [QUEEN]: { [WHITE]: [], [BLACK]: [] },
@@ -202,6 +201,8 @@ class Chess2 {
         this.history = [];
         this.squaresNearKing = {[WHITE]: [], [BLACK]: []};
         this.pawnControl = {[WHITE]: {}, [BLACK]: {}};
+        this.pawnCountsByRank = {[WHITE]: [0,0,0,0,0,0,0,0], [BLACK]: [0,0,0,0,0,0,0,0]};
+        this.pawnCountsByFile = {[WHITE]: [0,0,0,0,0,0,0,0], [BLACK]: [0,0,0,0,0,0,0,0]};
     }
 
 
@@ -327,6 +328,7 @@ class Chess2 {
 
             if (piece.type == PAWN) {
                 this.addPawnControl(piece, square);
+                this.addPawnCounts(piece, square);
             }
         }
     }
@@ -348,6 +350,7 @@ class Chess2 {
 
             if (piece.type == PAWN) {
                 this.removePawnControl(piece, square);
+                this.removePawnCounts(piece, square);
             }
         }
     }
@@ -371,6 +374,8 @@ class Chess2 {
             if (piece.type == PAWN) {
                 this.removePawnControl(piece, from);
                 this.addPawnControl(piece, to);
+                this.removePawnCounts(piece, from);
+                this.addPawnCounts(piece, to);
             }
         }
     }
@@ -451,6 +456,18 @@ class Chess2 {
                 if (this.pawnControl[piece.color][square] <= 0)
                     delete this.pawnControl[piece.color][square];
             });
+    }
+
+
+    addPawnCounts(piece, square) {
+        this.pawnCountsByRank[piece.color][rank(square)]++;
+        this.pawnCountsByFile[piece.color][file(square)]++;
+    }
+
+
+    removePawnCounts(piece, square) {
+        this.pawnCountsByRank[piece.color][rank(square)]--;
+        this.pawnCountsByFile[piece.color][file(square)]--;
     }
 
 
