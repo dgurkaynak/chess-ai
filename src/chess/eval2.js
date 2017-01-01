@@ -200,6 +200,12 @@ function eval2(game) {
     const kingsShield = {w: 0, b: 0};
     const blockages = {w: 0, b: 0};
     const positionalThemes = {w: 0, b: 0};
+    const mgMobility = {w: 0, b: 0};
+    const egMobility = {w: 0, b: 0};
+    const attackerCount = {w: 0, b: 0};
+    const attackWeight = {w: 0, b: 0};
+    const mgTropism = {w: 0, b: 0};
+    const egTropism = {w: 0, b: 0};
 
 
     /**
@@ -376,6 +382,81 @@ function eval2(game) {
     });
 
 
+    /**
+     * Knight
+     */
+    ['w', 'b'].forEach(color => {
+        const us = color;
+        const them = Chess2.swap_color(us);
+
+        game.pieces.n[us].forEach(square => {
+            const moves = game.generatePieceMoves(square);
+            let mobility = 0;
+            let kingAttacks = 0;
+
+            moves.forEach(move => {
+                if (!game.pawnControl[them][move.to] || game.pawnControl[them][move.to] <= 0) mobility++;
+                if (game.squaresNearKing[them].indexOf(move.to)) kingAttacks++;
+            });
+
+            mgMobility[us] += 4 * (mobility - 4);
+            egMobility[us] += 4 * (mobility - 4);
+
+            if (kingAttacks > 0) {
+                attackerCount[us]++;
+                attackWeight[us] += 2 * kingAttacks;
+            }
+
+            const tropism = getTropism(square, game.pieces.k[them]);
+            mgTropism[us] += 3 * tropism;
+            egTropism[us] += 3 * tropism;
+        });
+    });
+
+
+    /**
+     * Bishop
+     */
+    ['w', 'b'].forEach(color => {
+        const us = color;
+        const them = Chess2.swap_color(us);
+
+        game.pieces.b[us].forEach(square => {
+            const moves = game.generatePieceMoves(square);
+            let mobility = 0;
+            let kingAttacks = 0;
+
+            moves.forEach(move => {
+                if (!move.captured) {
+                    if (!game.pawnControl[them][move.to] || game.pawnControl[them][move.to] <= 0) mobility++;
+                } else {
+                    mobility++;
+                }
+
+                if (game.squaresNearKing[them].indexOf(move.to)) kingAttacks++;
+            });
+
+            mgMobility[us] += 3 * (mobility - 7);
+            egMobility[us] += 3 * (mobility - 7);
+
+            if (kingAttacks > 0) {
+                attackerCount[us]++;
+                attackWeight[us] += 2 * kingAttacks;
+            }
+
+            const tropism = getTropism(square, game.pieces.k[them]);
+            mgTropism[us] += 2 * tropism;
+            egTropism[us] += 1 * tropism;
+        });
+    });
+
+
+    /**
+     * Rook
+     */
+
+
+
     // Calculate result
     phase = Math.min(phase, 24);
 
@@ -383,6 +464,12 @@ function eval2(game) {
     egScore = mgScore;
 
     mgScore += kingsShield.w - kingsShield.b;
+
+    mgScore += mgMobility.w - mgMobility.b;
+    egScore += egMobility.w - egMobility.b;
+
+    mgScore += mgTropism.w - mgTropism.b;
+    egScore += egTropism.w - egTropism.b;
 
     result += ((phase * mgScore) + ((24 - phase) * egScore)) / 24;
     result += pieceAdjustment.w - pieceAdjustment.b;
@@ -402,6 +489,10 @@ const BLACK_INDEXES = _.flatten(_.chunk(_.times(128, i => i), 16).reverse());
 function relativeSquare(i, color) {
     if (color == 'w') return i;
     return BLACK_INDEXES[i];
+}
+
+function getTropism(from, to) {
+    return 7 - Math.abs(Chess2.rank(from) - Chess2.rank(to)) + Math.abs(Chess2.file(from) - Chess2.file(to))
 }
 
 
