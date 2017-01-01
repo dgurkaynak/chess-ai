@@ -231,6 +231,8 @@ class Chess2 {
         this.epSquare = (tokens[3] === '-') ? EMPTY : SQUARES[tokens[3]];
         this.halfMoves = parseInt(tokens[4], 10);
         this.moveNumber = parseInt(tokens[5], 10);
+
+        return true;
     }
 
 
@@ -285,6 +287,13 @@ class Chess2 {
         return this.board[square];
         // const piece = this.board[square];
         // return piece ? { type: piece.type, color: piece.color } : null;
+    }
+
+
+    checkPiece(square, color, type) {
+        const piece = this.getPiece(square);
+        if (!piece) return false;
+        return piece.color == color && piece.type == type;
     }
 
 
@@ -825,6 +834,9 @@ class Chess2 {
  */
 Chess2.SQUARES = SQUARES;
 Chess2.SQUARE_COLORS = SQUARE_COLORS;
+Chess2.rank = rank;
+Chess2.file = file;
+Chess2.swap_color = swap_color;
 
 
 if (typeof module !== 'undefined') module.exports = Chess2;
