@@ -129,16 +129,16 @@ const ROOKS = {
 };
 
 const V = {
-    NORTH: 16,
-    NN: 32,
-    SOUTH: -16,
-    SS: -32,
+    NORTH: -16,
+    NN: -32,
+    SOUTH: 16,
+    SS: 32,
     EAST: 1,
     WEST: -1,
-    NE: 17,
-    SW: -17,
-    NW: 15,
-    SE: -15
+    NE: -15,
+    SW: 15,
+    NW: -17,
+    SE: 17
 };
 
 
@@ -166,6 +166,10 @@ function swap_color(c) {
 
 function is_digit(c) {
     return '0123456789'.indexOf(c) !== -1;
+}
+
+function validateSquare(square) {
+    return rank(square) < 8 && file(square) < 8;
 }
 
 
@@ -197,6 +201,7 @@ class Chess2 {
         this.moveNumber = 1;
         this.history = [];
         this.squaresNearKing = {[WHITE]: [], [BLACK]: []};
+        this.pawnControl = {[WHITE]: {}, [BLACK]: {}};
     }
 
 
@@ -319,6 +324,10 @@ class Chess2 {
             this.setSquaresNearKing(piece, square);
         } else {
             this.pieces[piece.type][piece.color].push(square);
+
+            if (piece.type == PAWN) {
+                this.addPawnControl(piece, square);
+            }
         }
     }
 
@@ -336,6 +345,10 @@ class Chess2 {
             const pieces = this.pieces[piece.type][piece.color];
             const index = pieces.indexOf(square);
             pieces.splice(index, 1);
+
+            if (piece.type == PAWN) {
+                this.removePawnControl(piece, square);
+            }
         }
     }
 
@@ -354,6 +367,11 @@ class Chess2 {
             const pieces = this.pieces[piece.type][piece.color];
             const index = pieces.indexOf(from);
             pieces.splice(index, 1, to);
+
+            if (piece.type == PAWN) {
+                this.removePawnControl(piece, from);
+                this.addPawnControl(piece, to);
+            }
         }
     }
 
@@ -393,9 +411,46 @@ class Chess2 {
                 square + V.SOUTH + V.SE,
                 square + V.SOUTH + V.SW
             ]
-        ).filter(square => {
-            return rank(square) < 8 && file(square) < 8;
-        });
+        );
+        //.filter(validateSquare); // Validation is so slow
+    }
+
+
+    addPawnControl(piece, square) {
+        // if (piece.type != PAWN) return;
+
+        const squares = [
+            square + (piece.color == WHITE ? V.NE : V.SE),
+            square + (piece.color == WHITE ? V.NW : V.SW)
+        ];
+
+        squares
+            // .filter(validateSquare) // Validation is so slow
+            .forEach(square => {
+                if (this.pawnControl[piece.color][square] === undefined)
+                    this.pawnControl[piece.color][square] = 0;
+
+                this.pawnControl[piece.color][square]++;
+            });
+    }
+
+
+    removePawnControl(piece, square) {
+        // if (piece.type != PAWN) return;
+
+        const squares = [
+            square + (piece.color == 'w' ? V.NE : V.SE),
+            square + (piece.color == 'w' ? V.NW : V.SW)
+        ];
+
+        squares
+            // .filter(validateSquare)
+            .forEach(square => {
+                this.pawnControl[piece.color][square]--;
+
+                if (this.pawnControl[piece.color][square] <= 0)
+                    delete this.pawnControl[piece.color][square];
+            });
     }
 
 
@@ -884,6 +939,7 @@ Chess2.SQUARE_COLORS = SQUARE_COLORS;
 Chess2.rank = rank;
 Chess2.file = file;
 Chess2.swap_color = swap_color;
+Chess2.validateSquare = validateSquare;
 
 
 if (typeof module !== 'undefined') module.exports = Chess2;
