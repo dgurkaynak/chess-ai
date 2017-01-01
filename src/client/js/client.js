@@ -31,6 +31,7 @@ var onDrop = function (source, target) {
     if (!game.isGameOver() && game.turn == 'b') {
         setTimeout(function() {
             console.time('search');
+            // var result = search2(game, {depthLimitSoft: 2, depthLimitHard: 2});
             var result = search2(game, {depthLimitSoft: 4, depthLimitHard: 5});
             console.timeEnd('search');
             if (!result) return;
