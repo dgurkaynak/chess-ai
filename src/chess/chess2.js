@@ -513,6 +513,8 @@ class Chess2 {
                 } else {
                     if (piece.color === BLACK) return true;
                 }
+
+                return false;
             }
 
             /* if the piece is a knight or a king */
