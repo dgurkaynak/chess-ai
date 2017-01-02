@@ -15,7 +15,8 @@ server.on('connection', function(connection) {
         const worker = cluster.fork();
         const msg = {
             type: 'eval',
-            fen: message.payload.fen
+            fen: message.payload.fen,
+            verbose: !!message.payload.verbose
         };
 
         worker.on('online', () => {

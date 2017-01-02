@@ -21,10 +21,32 @@ function evalServer() {
     const startDate = new Date();
 
     return lineClient
-        .send('eval', {fen: game.generateFen()})
+        .send('eval', {fen: game.generateFen(), verbose: true})
         .then((result) => {
             consoleEl.html(`
-                Score: ${result} <br/>
+                Result: ${result.result} <br/><br/>
+
+                Phase: ${result.phase} <br/>
+                Midgame Score: ${result.mgScore} <br/>
+                Endgame Score: ${result.egScore} <br/><br/>
+
+                Piece Value: ${JSON.stringify(result.materials, null, 2)} <br/>
+                Piece Value Adjustments: ${JSON.stringify(result.pieceAdjustment, null, 2)} <br/>
+                Midgame PST: ${JSON.stringify(result.mgPSTs, null, 2)} <br/>
+                Endgame PST: ${JSON.stringify(result.egPSTs, null, 2)} <br/><br/>
+
+                King's Shield: ${JSON.stringify(result.kingsShield, null, 2)} <br/>
+                Blockages: ${JSON.stringify(result.blockages, null, 2)} <br/>
+                Blockages: ${JSON.stringify(result.blockages, null, 2)} <br/>
+                Positional Themes: ${JSON.stringify(result.positionalThemes, null, 2)} <br/><br/>
+
+                Midgame Mobility: ${JSON.stringify(result.mgMobility, null, 2)} <br/>
+                Endgame Mobility: ${JSON.stringify(result.egMobility, null, 2)} <br/>
+                Positional Themes: ${JSON.stringify(result.positionalThemes, null, 2)} <br/><br/>
+
+                Attacker: ${JSON.stringify(result.attackerCount, null, 2)} <br/>
+                Attack Weight: ${JSON.stringify(result.attackWeight, null, 2)} <br/><br/>
+
                 Took: ${(new Date().getTime() - startDate.getTime()) / 1000}s
             `);
 

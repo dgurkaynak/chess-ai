@@ -17,7 +17,7 @@ process.on('message', (msg) => {
         case 'eval':
             game.loadFen(msg.fen);
 
-            response.result = eval2(game);
+            response.result = eval2(game, {verbose: msg.verbose});
 
             process.send(JSON.stringify(response));
             break;

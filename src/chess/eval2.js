@@ -187,7 +187,7 @@ const PST = {
 };
 
 
-function eval2(game) {
+function eval2(game, {verbose = false} = {}) {
     let result = 0;
     let phase = 0;
     let mgScore = 0;
@@ -574,7 +574,25 @@ function eval2(game) {
     result += blockages.w - blockages.b;
     result += positionalThemes.w - positionalThemes.b;
 
-    return result;
+    return verbose == false ? result : {
+        result,
+        phase,
+        mgScore,
+        egScore,
+        materials,
+        pieceAdjustment,
+        mgPSTs,
+        egPSTs,
+        kingsShield,
+        blockages,
+        positionalThemes,
+        mgMobility,
+        egMobility,
+        attackerCount,
+        attackWeight,
+        mgTropism,
+        egTropism
+    };
 }
 
 
