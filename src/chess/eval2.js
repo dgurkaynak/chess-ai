@@ -23,7 +23,6 @@ const KNIGHT_TRAPPED_A8_PENALTY = 150;
 const KNIGHT_TRAPPED_A7_PENALTY = 100;
 
 const C3_KNIGHT_PENALTY = 5;
-const NO_FIANCHETTO_PENALTY = 4;
 
 const KING_SHIELD_RANK_2_BONUS = 10;
 const KING_SHIELD_RANK_3_BONUS = 5;
@@ -32,7 +31,6 @@ const KING_NO_SHIELD_PENALTY = 10;
 const ROOK_OPEN_BONUS = 10;
 const ROOK_HALF_BONUS = 5;
 const RETURNING_BISHOP_BONUS = 20;
-const FIANCHETTO_BONUS = 4;
 
 // PSTs
 const PAWN_MG_PST = [
@@ -596,6 +594,74 @@ function eval2(game, {verbose = false} = {}) {
 }
 
 
+function eval2_basic(game) {
+    let result = 0;
+    let phase = 0;
+
+    const materials = {w: 0, b: 0};
+    const pieceAdjustment = {w: 0, b: 0};
+    const mgPSTs = {w: 0, b: 0};
+    const egPSTs = {w: 0, b: 0};
+
+
+    /**
+     * Foreach piece on the board
+     */
+    _.forEach(game.pieces, (pieces, pieceType) => {
+        ['w', 'b'].forEach(color => {
+            const squares = pieceType == 'k' ? [pieces[color]] : pieces[color];
+
+            // Piece values
+            const score = squares.length * PIECE_VALUES[pieceType];
+            materials[color] += score;
+
+            // Piece value adjustments and pair bonuses
+            let adjustment = 0;
+            if (pieceType == 'b' && squares.length > 1) {
+                adjustment += BISHOP_PAIR_BONUS;
+            } else if (pieceType == 'n' || pieceType == 'r') {
+                if (squares.length > 1) {
+                    const penalty = pieceType == 'n' ? KNIGHT_PAIR_PENALTY : ROOK_PAIR_PENALTY;
+                    adjustment -= penalty;
+                }
+
+                const pawnCount = game.pieces.p[color].length;
+                const adj = pieceType == 'n' ? KNIGHT_VALUE_ADJUSTMENTS : ROOK_VALUE_ADJUSTMENTS;
+                adjustment += adj[pawnCount] * squares.length;
+            }
+            pieceAdjustment[color] += adjustment;
+
+            // PSTs
+            squares.forEach(square => {
+                mgPSTs[color] += PST.mg[pieceType][color][square];
+                egPSTs[color] += PST.eg[pieceType][color][square];
+            });
+
+            // Game phase
+            if (pieceType == 'n' || pieceType == 'b') {
+                phase += 1;
+            } else if (pieceType == 'r') {
+                phase += 2;
+            } else if (pieceType == 'q') {
+                phase += 4;
+            }
+        });
+    });
+
+
+    // Calculate result
+    phase = Math.min(phase, 24);
+
+    mgScore = materials.w - materials.b + mgPSTs.w - mgPSTs.b;
+    egScore = mgScore;
+
+    result += ((phase * mgScore) + ((24 - phase) * egScore)) / 24;
+    result += pieceAdjustment.w - pieceAdjustment.b;
+
+    return result;
+}
+
+
 // Helpers
 function mirrorPST(arr) {
     return _.flatten(_.chunk(arr, 16).reverse());
@@ -617,4 +683,7 @@ function relativeRank(rank, color) {
 }
 
 
-if (typeof module !== 'undefined') module.exports = eval2;
+if (typeof module !== 'undefined') {
+    module.exports = eval2;
+    module.exports.basic = eval2_basic;
+}

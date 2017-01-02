@@ -34,6 +34,7 @@ function search2(game, options) {
         }
 
         // move.score = eval(game) * color;
+        move.basicScore = eval2.basic(game) * color;
         validMoves.push(move);
         game.undo();
     }
@@ -59,9 +60,10 @@ function search2(game, options) {
     let best = null;
 
     // TODO: Order by best maybe?
+    const sortedValidMoves = _.sortBy(validMoves, move => -1 * move.basicScore);
 
-    for (let i in validMoves) {
-        const move = validMoves[i];
+    for (let i in sortedValidMoves) {
+        const move = sortedValidMoves[i];
         game.move(move);
 
         const newHistory = options.history.slice();
