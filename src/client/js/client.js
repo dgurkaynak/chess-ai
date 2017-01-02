@@ -14,6 +14,7 @@ const autopilotWhiteCheckboxEl = $('#autopilotWhite');
 const autopilotBlackCheckboxEl = $('#autopilotBlack');
 const depthLimitSoftEl = $('#depthLimitSoft');
 const depthLimitHardEl = $('#depthLimitHard');
+const redrawBoardButtonEl = $('#redrawBoardButton');
 
 
 function evalServer() {
@@ -136,34 +137,38 @@ function updateBoardStatus() {
     }
 };
 
-board = ChessBoard('board', {
-    draggable: true,
-    position: 'start',
-    onDragStart: function (source, piece, position, orientation) {
-        return true;
-        if (game.isGameOver() === true ||
-            (game.turn === 'w' && piece.search(/^b/) !== -1) ||
-            (game.turn === 'b' && piece.search(/^w/) !== -1)) {
-            return false;
+function createBoard() {
+    board = ChessBoard('board', {
+        draggable: true,
+        // position: 'start',
+        onDragStart: function (source, piece, position, orientation) {
+            return true;
+            if (game.isGameOver() === true ||
+                (game.turn === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
+        },
+        onDrop: function (source, target) {
+            // see if the move is legal
+            var move = game.move_({
+                from: Chess2.SQUARES[source],
+                to: Chess2.SQUARES[target],
+                promotion: 'q' // NOTE: always promote to a queen for example simplicity
+            });
+
+            // illegal move
+            if (!move) return 'snapback';
+
+            updateBoardStatus();
+        },
+        onSnapEnd: function () {
+            board.position(game.generateFen());
         }
-    },
-    onDrop: function (source, target) {
-        // see if the move is legal
-        var move = game.move_({
-            from: Chess2.SQUARES[source],
-            to: Chess2.SQUARES[target],
-            promotion: 'q' // NOTE: always promote to a queen for example simplicity
-        });
+    });
 
-        // illegal move
-        if (!move) return 'snapback';
-
-        updateBoardStatus();
-    },
-    onSnapEnd: function () {
-        board.position(game.generateFen());
-    }
-});
+    board.position(game.generateFen());
+};
 
 
 loadFenButtonEl.click(function() {
@@ -206,6 +211,11 @@ autopilotBlackCheckboxEl.change(function() {
     }
 });
 
+redrawBoardButtonEl.click(function() {
+    if (board) board.destroy();
+    createBoard();
+});
+
 
 /**
  * Start
@@ -215,4 +225,5 @@ lineClient.on('_connected', () => {
 });
 lineClient.connect();
 
+createBoard();
 updateBoardStatus();
