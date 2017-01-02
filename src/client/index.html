@@ -8,21 +8,64 @@
     <meta name="author" content="Deniz Gurkaynak">
 
     <link rel="stylesheet" href="./css/chessboard-0.3.0.css">
+    <link rel="stylesheet" href="./css/layout.css">
 </head>
 
 <body>
     <div id="board" style="width: 400px"></div>
-    <p>Status: <span id="status"></span></p>
-    <p>FEN: <span id="fen"></span></p>
-    <p><button id="loadFenButton">Load FEN</button></p>
+    <div id="controls">
+        <div id="status"></div>
+        <hr/>
+        <div class="control-row">
+            <div class="control-row-left">FEN:</div>
+            <div class="control-row-right">
+                <input type="text" id="fen" readonly>
+            </div>
+        </div>
+        <div class="control-row">
+            <div class="control-row-left">Auto-pilot White:</div>
+            <div class="control-row-right">
+                <input type="checkbox" id="autopilotWhite">
+            </div>
+        </div>
+        <div class="control-row">
+            <div class="control-row-left">Auto-pilot Black:</div>
+            <div class="control-row-right">
+                <input type="checkbox" id="autopilotBlack" checked>
+            </div>
+        </div>
+        <div class="control-row">
+            <div class="control-row-left">Depth Limit (Soft):</div>
+            <div class="control-row-right">
+                <input type="number" id="depthLimitSoft" value="2">
+            </div>
+        </div>
+        <div class="control-row">
+            <div class="control-row-left">Depth Limit (Hard):</div>
+            <div class="control-row-right">
+                <input type="number" id="depthLimitSoft" value="6">
+            </div>
+        </div>
+        <div id="buttons">
+            <button id="evalButton">Evaluate</button>
+            <button id="searchButton">Search</button>
+            <button id="loadFenButton">Load FEN</button>
+            <button id="resetButton">Reset</button>
+            <button id="undoButton">Undo</button>
+        </div>
+        <hr/>
+        <div id="console"></div>
+    </div>
 
-    <script src="./js/lodash.js"></script>
+
+    <script src="../../node_modules/lodash/lodash.min.js"></script>
     <script src="../chess/chess2.js"></script>
     <script src="../chess/eval2.js"></script>
     <script src="../chess/search2.js"></script>
 
-    <script src="./js/jquery-3.1.1.min.js"></script>
-    <script src="./js/chessboard-0.3.0.js"></script>
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../node_modules/chessboardjs/www/releases/0.3.0/js/chessboard-0.3.0.min.js"></script>
+    <script src="../../node_modules/line-socket/dist/client-web-globals.js"></script>
     <script src="./js/client.js"></script>
 </body>
 </html>

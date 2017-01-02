@@ -1,0 +1,53 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#board {
+    margin: 0 auto;
+}
+
+#status {
+    text-align: center;
+    margin-top: 15px;
+}
+
+#controls {
+    width: 400px;
+    margin: 15px auto;
+}
+
+.control-row {
+    display: flex;
+}
+
+.control-row-left {
+    align-self: center;
+    font-size: 12px;
+    /*font-weight: 600;*/
+}
+
+.control-row-right {
+    flex-grow: 1;
+    text-align: right;
+}
+
+#fen {
+    width: calc(100% - 20px);
+}
+
+#depthLimitSoft, #depthLimitHard {
+    width: 30px;
+}
+
+#buttons {
+    margin-top: 15px;
+    text-align: center;
+}
+
+#console {
+    font-family: 'Courier New';
+    font-size: 12px;
+}

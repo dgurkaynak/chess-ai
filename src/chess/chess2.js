@@ -957,6 +957,7 @@ Chess2.rank = rank;
 Chess2.file = file;
 Chess2.swap_color = swap_color;
 Chess2.validateSquare = validateSquare;
+Chess2.algebraic = algebraic;
 
 
 if (typeof module !== 'undefined') module.exports = Chess2;
