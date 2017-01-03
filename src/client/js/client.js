@@ -8,6 +8,7 @@ const fenEl = $('#fen');
 const evalButtonEl = $('#evalButton');
 const searchButtonEl = $('#searchButton');
 const loadFenButtonEl = $('#loadFenButton');
+const loadWacButtonEl = $('#loadWacButton');
 const resetButtonEl = $('#resetButton');
 const undoButtonEl = $('#undoButton');
 const autopilotWhiteCheckboxEl = $('#autopilotWhite');
@@ -214,6 +215,16 @@ autopilotBlackCheckboxEl.change(function() {
 redrawBoardButtonEl.click(function() {
     if (board) board.destroy();
     createBoard();
+});
+
+loadWacButtonEl.click(function() {
+    var index = prompt('Which puzzle from WAC 300?');
+    var puzzle = wac300[parseInt(index, 10)];
+    if (!puzzle) return;
+    if (!game.loadFen(puzzle.fen)) return;
+    board.position(puzzle.fen);
+    updateBoardStatus();
+    console.log(puzzle.result);
 });
 
 
