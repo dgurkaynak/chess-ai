@@ -1,3 +1,6 @@
+/**
+ * Negamax with alpha-beta pruning and dynamic ordering
+ */
 function search2(game, options) {
     options = _.assign({
         history: [],
