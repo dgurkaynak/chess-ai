@@ -224,7 +224,7 @@ loadWacButtonEl.click(function() {
     if (!game.loadFen(puzzle.fen)) return;
     board.position(puzzle.fen);
     updateBoardStatus();
-    console.log(puzzle.result);
+    consoleEl.text('Best move: ' + puzzle.result);
 });
 
 
