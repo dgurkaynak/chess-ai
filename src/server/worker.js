@@ -25,6 +25,8 @@ process.on('message', (msg) => {
             game.loadFen(msg.fen);
 
             response.result = search2(game, {depthLimitSoft: msg.depthLimitSoft, depthLimitHard: msg.depthLimitHard});
+            if (response.result.score == Infinity) response.result.score = 'Infinity';
+            if (response.result.score == -Infinity) response.result.score = '-Infinity';
 
             process.send(JSON.stringify(response));
             break;
