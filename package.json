@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/server/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test/wac300.js",
     "serve": "http-server .",
     "start": "node src/server/app.js"
   },
