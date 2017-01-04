@@ -1,4 +1,10 @@
 /**
+ * This is a some kind of rewritten version of chess.js for custom requirements.
+ * Original work: https://github.com/jhlywa/chess.js
+ */
+
+
+/**
  * Constants
  */
 const BLACK = 'b';
