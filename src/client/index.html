@@ -12,52 +12,55 @@
 </head>
 
 <body>
-    <div id="board" style="width: 400px"></div>
-    <div id="controls">
-        <div id="status"></div>
-        <hr/>
-        <div class="control-row">
-            <div class="control-row-left">FEN:</div>
-            <div class="control-row-right">
-                <input type="text" id="fen" readonly>
+    <div id="container">
+        <div id="board"></div>
+        <div id="controls">
+            <div id="status"></div>
+            <hr/>
+            <div class="control-row">
+                <div class="control-row-left">FEN:</div>
+                <div class="control-row-right">
+                    <input type="text" id="fen" readonly>
+                </div>
             </div>
-        </div>
-        <div class="control-row">
-            <div class="control-row-left">Auto-pilot White:</div>
-            <div class="control-row-right">
-                <input type="checkbox" id="autopilotWhite">
+            <div class="control-row">
+                <div class="control-row-left">Auto-pilot White:</div>
+                <div class="control-row-right">
+                    <input type="checkbox" id="autopilotWhite">
+                </div>
             </div>
-        </div>
-        <div class="control-row">
-            <div class="control-row-left">Auto-pilot Black:</div>
-            <div class="control-row-right">
-                <input type="checkbox" id="autopilotBlack" checked>
+            <div class="control-row">
+                <div class="control-row-left">Auto-pilot Black:</div>
+                <div class="control-row-right">
+                    <input type="checkbox" id="autopilotBlack" checked>
+                </div>
             </div>
-        </div>
-        <div class="control-row">
-            <div class="control-row-left">Depth Limit (Soft):</div>
-            <div class="control-row-right">
-                <input type="number" id="depthLimitSoft" value="2">
+            <div class="control-row">
+                <div class="control-row-left">Depth Limit (Soft):</div>
+                <div class="control-row-right">
+                    <input type="number" id="depthLimitSoft" value="2">
+                </div>
             </div>
-        </div>
-        <div class="control-row">
-            <div class="control-row-left">Depth Limit (Hard):</div>
-            <div class="control-row-right">
-                <input type="number" id="depthLimitSoft" value="6">
+            <div class="control-row">
+                <div class="control-row-left">Depth Limit (Hard):</div>
+                <div class="control-row-right">
+                    <input type="number" id="depthLimitSoft" value="6">
+                </div>
             </div>
+            <div id="buttons">
+                <button id="evalButton">Eval</button>
+                <button id="searchButton">Search</button>
+                <button id="loadFenButton">Load FEN</button>
+                <button id="loadWacButton">Load WAC</button>
+                <button id="redrawBoardButton">Redraw</button>
+                <button id="undoButton">Undo</button>
+                <button id="resetButton">Reset</button>
+            </div>
+            <hr/>
+            <div id="console"></div>
         </div>
-        <div id="buttons">
-            <button id="evalButton">Eval</button>
-            <button id="searchButton">Search</button>
-            <button id="loadFenButton">Load FEN</button>
-            <button id="loadWacButton">Load WAC</button>
-            <button id="redrawBoardButton">Redraw</button>
-            <button id="undoButton">Undo</button>
-            <button id="resetButton">Reset</button>
-        </div>
-        <hr/>
-        <div id="console"></div>
     </div>
+
 
 
     <script src="../../node_modules/lodash/lodash.min.js"></script>

@@ -5,18 +5,27 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#board {
-    margin: 0 auto;
+#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 
-#status {
-    text-align: center;
-    margin-top: 15px;
+#board {
+    width: 400px;
+    height: 400px;
 }
 
 #controls {
     width: 400px;
-    margin: 15px auto;
+    height: 400px;
+    margin-left: 25px;
+}
+
+#status {
+    text-align: center;
+    font-weight: 600;
 }
 
 .control-row {
