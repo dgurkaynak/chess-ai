@@ -39,12 +39,10 @@ function evalServer() {
 
                 King's Shield: ${JSON.stringify(result.kingsShield, null, 2)} <br/>
                 Blockages: ${JSON.stringify(result.blockages, null, 2)} <br/>
-                Blockages: ${JSON.stringify(result.blockages, null, 2)} <br/>
                 Positional Themes: ${JSON.stringify(result.positionalThemes, null, 2)} <br/><br/>
 
                 Midgame Mobility: ${JSON.stringify(result.mgMobility, null, 2)} <br/>
                 Endgame Mobility: ${JSON.stringify(result.egMobility, null, 2)} <br/>
-                Positional Themes: ${JSON.stringify(result.positionalThemes, null, 2)} <br/><br/>
 
                 Attacker: ${JSON.stringify(result.attackerCount, null, 2)} <br/>
                 Attack Weight: ${JSON.stringify(result.attackWeight, null, 2)} <br/><br/>
