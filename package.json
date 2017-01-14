@@ -1,6 +1,6 @@
 {
   "name": "chess-ai",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "AI playing chess and eating patato...",
   "main": "src/server/app.js",
   "scripts": {
