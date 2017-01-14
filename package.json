@@ -1,15 +1,19 @@
 {
   "name": "chess-ai",
   "version": "0.0.1",
-  "description": "",
+  "description": "AI playing chess and eating patato...",
   "main": "src/server/app.js",
   "scripts": {
     "test": "node test/wac300.js",
     "serve": "http-server .",
     "start": "node src/server/app.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["chess", "ai"],
+  "author": "Deniz Gurkaynak <dgurkaynak@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dgurkaynak/chess-ai"
+  },
   "license": "ISC",
   "dependencies": {
     "chessboardjs": "0.0.1",
