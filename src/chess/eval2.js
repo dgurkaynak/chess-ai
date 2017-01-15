@@ -394,7 +394,7 @@ function eval2(game, {verbose = false} = {}) {
 
             moves.forEach(move => {
                 if (!game.pawnControl[them][move.to] || game.pawnControl[them][move.to] <= 0) mobility++;
-                if (game.squaresNearKing[them].indexOf(move.to)) kingAttacks++;
+                if (game.squaresNearKing[them].indexOf(move.to) > -1) kingAttacks++;
             });
 
             mgMobility[us] += 4 * (mobility - 4);
@@ -431,7 +431,7 @@ function eval2(game, {verbose = false} = {}) {
                     mobility++;
                 }
 
-                if (game.squaresNearKing[them].indexOf(move.to)) kingAttacks++;
+                if (game.squaresNearKing[them].indexOf(move.to) > -1) kingAttacks++;
             });
 
             mgMobility[us] += 3 * (mobility - 7);
@@ -486,7 +486,7 @@ function eval2(game, {verbose = false} = {}) {
 
             moves.forEach(move => {
                 mobility++;
-                if (game.squaresNearKing[them].indexOf(move.to)) kingAttacks++;
+                if (game.squaresNearKing[them].indexOf(move.to) > -1) kingAttacks++;
             });
 
             mgMobility[us] += 2 * (mobility - 7);
@@ -535,7 +535,7 @@ function eval2(game, {verbose = false} = {}) {
 
             moves.forEach(move => {
                 mobility++;
-                if (game.squaresNearKing[them].indexOf(move.to)) kingAttacks++;
+                if (game.squaresNearKing[them].indexOf(move.to) > -1) kingAttacks++;
             });
 
             mgMobility[us] += 1 * (mobility - 14);
