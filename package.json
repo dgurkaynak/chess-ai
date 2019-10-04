@@ -8,7 +8,10 @@
     "serve": "http-server .",
     "start": "node src/server/app.js"
   },
-  "keywords": ["chess", "ai"],
+  "keywords": [
+    "chess",
+    "ai"
+  ],
   "author": "Deniz Gurkaynak <dgurkaynak@gmail.com>",
   "repository": {
     "type": "git",
@@ -16,10 +19,10 @@
   },
   "license": "ISC",
   "dependencies": {
-    "chessboardjs": "0.0.1",
-    "http-server": "0.9.0",
-    "jquery": "3.1.1",
-    "line-socket": "0.1.5",
-    "lodash": "4.17.4"
+    "chessboardjs": "^0.0.1",
+    "http-server": "^0.11.1",
+    "jquery": "^3.4.1",
+    "line-socket": "^1.1.3",
+    "lodash": "^4.17.15"
   }
 }
