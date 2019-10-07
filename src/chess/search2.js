@@ -1,3 +1,7 @@
+const _ = require('lodash');
+const eval2 = require('./eval2');
+
+
 /**
  * Negamax with alpha-beta pruning and dynamic ordering
  */
@@ -101,4 +105,6 @@ function search2(game, options) {
 }
 
 
-if (typeof module !== 'undefined') module.exports = search2;
+if (typeof module !== 'undefined') {
+    module.exports = search2;
+}

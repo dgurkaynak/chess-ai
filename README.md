@@ -1,10 +1,12 @@
 # chess-ai
 
-Medium strength Chess AI implementation with node.js.
+Medium strength Chess AI implementation in JavaScript.
 
-![Demo](./demo.gif)
+Avaliable on: [https://deniz.co/chess-ai/](https://deniz.co/chess-ai/)
 
-[Project Report](https://drive.google.com/file/d/0B0RFeAd0sIc6RzNOaHhRUFdCTnc/view?usp=sharing) | [Presentation](https://drive.google.com/file/d/0B0RFeAd0sIc6MjZWVGl4QS1nOXM/view?usp=sharing)
+[![Demo](./demo.gif)](https://deniz.co/chess-ai/)
+
+[Presentation](https://drive.google.com/file/d/0B0RFeAd0sIc6MjZWVGl4QS1nOXM/view?usp=sharing) | [Project Report](https://drive.google.com/file/d/0B0RFeAd0sIc6RzNOaHhRUFdCTnc/view?usp=sharing)
 
 ## Method overview
 
@@ -18,28 +20,23 @@ Medium strength Chess AI implementation with node.js.
     - Safe mobility
     - Attack count&weight
 
-## Prerequisites
-
-- Node.js (developed and tested with 6.9.1)
-- A modern browser (developed and tested with Chrome 55)
-
 ## Setup
 
 - Install dependencies with `npm i`
+- Start development server `npm start` and open `http://localhost:1234`
+- To build run `npm run build`, server `./dist` folder with your favorite webserver.
+- To run tests suites:
 
-- Start chess engine backend
-
-  ```bash
-  npm start
-  ```
-
-- Start frontend
-
-  ```bash
-  npm run serve
-  ```
-
-  Open `http://localhost:8080/src/client` in your favorite browser
+```
+node test/bratko-kopec.js
+node test/ccr.js
+node test/eigenmann-endgame.js
+node test/kaufman.js
+node test/lct.js
+node test/nolot.js
+node test/sbd.js
+node test/wac300.js
+```
 
 ## Thanks
 

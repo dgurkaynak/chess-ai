@@ -1,3 +1,5 @@
+@import 'chessboardjs/www/css/chessboard.css';
+
 html, body {
     margin: 0;
     padding: 0;
@@ -13,14 +15,34 @@ html, body {
 }
 
 #board {
-    width: 400px;
-    height: 400px;
+    width: 45%;
 }
 
 #controls {
-    width: 400px;
-    height: 400px;
+    width: 45%;
     margin-left: 25px;
+}
+
+@media only screen and (max-width: 600px){
+    #container {
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    #board {
+        margin-top: 10px;
+        width: 95%;
+    }
+
+    #controls {
+        width: 95%;
+        margin-left: 0;
+        margin-top: 25px;
+    }
+
+    .github-corner {
+        display: none;
+    }
 }
 
 #status {

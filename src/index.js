@@ -1,4 +1,30 @@
-var wac300 = [
+import '@babel/polyfill';
+import _ from 'lodash';
+import $ from 'jquery';
+window.$ = $; // Fix for chessboard.js
+import ChessBoard from 'chessboardjs/www/js/chessboard.js';
+
+import Chess2 from './chess/chess2';
+import chesspieces from './assets/chesspieces';
+
+const game = new Chess2();
+let board;
+const statusEl = $('#status');
+const consoleEl = $('#console');
+const fenEl = $('#fen');
+const evalButtonEl = $('#evalButton');
+const searchButtonEl = $('#searchButton');
+const loadFenButtonEl = $('#loadFenButton');
+const loadWacButtonEl = $('#loadWacButton');
+const resetButtonEl = $('#resetButton');
+const undoButtonEl = $('#undoButton');
+const autopilotWhiteCheckboxEl = $('#autopilotWhite');
+const autopilotBlackCheckboxEl = $('#autopilotBlack');
+const depthLimitSoftEl = $('#depthLimitSoft');
+const depthLimitHardEl = $('#depthLimitHard');
+const redrawBoardButtonEl = $('#redrawBoardButton');
+
+const wac300 = [
     { fen: '2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - -', result: 'Qg6' },
     { fen: '8/7p/5k2/5p2/p1p2P2/Pr1pPK2/1P1R3P/8 b - -', result: 'Rxb2' },
     { fen: '5rk1/1ppb3p/p1pb4/6q1/3P1p1r/2P1R2P/PP1BQ1P1/5RKN w - -', result: 'Rg3' },
@@ -300,3 +326,317 @@ var wac300 = [
     { fen: '1n2rr2/1pk3pp/pNn2p2/2N1p3/8/6P1/PP2PPKP/2RR4 w - -', result: 'Nca4' },
     { fen: 'b2b1r1k/3R1ppp/4qP2/4p1PQ/4P3/5B2/4N1K1/8 w - -', result: 'g6' },
 ];
+
+
+function eval_() {
+    consoleEl.text('Evaluating...');
+    const startDate = new Date();
+
+    return new Promise((resolve, reject) => {
+        const worker = new Worker('./worker.js');
+
+        worker.onmessage = (e) => {
+            resolve(e.data);
+            worker.terminate();
+        };
+
+        worker.postMessage({
+            type: 'eval',
+            fen: game.generateFen(),
+            verbose: true
+        });
+    }).then(({result}) => {
+        consoleEl.html(`
+            Result: ${result.result} <br/><br/>
+
+            Phase: ${result.phase} <br/>
+            Midgame Score: ${result.mgScore} <br/>
+            Endgame Score: ${result.egScore} <br/><br/>
+
+            Piece Value: ${JSON.stringify(result.materials, null, 2)} <br/>
+            Piece Value Adjustments: ${JSON.stringify(result.pieceAdjustment, null, 2)} <br/>
+            Midgame PST: ${JSON.stringify(result.mgPSTs, null, 2)} <br/>
+            Endgame PST: ${JSON.stringify(result.egPSTs, null, 2)} <br/><br/>
+
+            King's Shield: ${JSON.stringify(result.kingsShield, null, 2)} <br/>
+            Blockages: ${JSON.stringify(result.blockages, null, 2)} <br/>
+            Positional Themes: ${JSON.stringify(result.positionalThemes, null, 2)} <br/><br/>
+
+            Midgame Mobility: ${JSON.stringify(result.mgMobility, null, 2)} <br/>
+            Endgame Mobility: ${JSON.stringify(result.egMobility, null, 2)} <br/>
+
+            Attacker: ${JSON.stringify(result.attackerCount, null, 2)} <br/>
+            Attack Weight: ${JSON.stringify(result.attackWeight, null, 2)} <br/><br/>
+
+            Took: ${(new Date().getTime() - startDate.getTime()) / 1000}s
+        `);
+
+        return result;
+    });
+}
+
+
+function search() {
+    consoleEl.text('Searching...');
+    const startDate = new Date();
+
+    return new Promise((resolve, reject) => {
+        const worker = new Worker('./worker.js');
+
+        worker.onmessage = (e) => {
+            resolve(e.data);
+            worker.terminate();
+        };
+
+        worker.postMessage({
+            type: 'search',
+            fen: game.generateFen(),
+            depthLimitSoft: parseInt(depthLimitSoftEl.val(), 10),
+            depthLimitHard: parseInt(depthLimitHardEl.val(), 10)
+        });
+    }).then(({result}) => {
+        consoleEl.html(`
+            Score: ${result.score}<br/>
+            Depth: ${result.depthLimitSoft}<br/>
+            Moves: ${result.history.map(move => `${Chess2.algebraic(move.from)} -> ${Chess2.algebraic(move.to)}`).join(', ')}<br/><br/>
+            Took: ${(new Date().getTime() - startDate.getTime()) / 1000}s
+        `);
+
+        return result;
+    });
+}
+
+
+function autopilot() {
+    if (game.isGameOver())
+        return false;
+
+    search()
+        .then((result) => {
+            window.Countly.add_event({
+                'key': 'autopilot_move',
+                'count': 1,
+                'segmentation': {
+                    'color': game.turn,
+                    'depthLimitSoft': parseInt(depthLimitSoftEl.val(), 10),
+                    'depthLimitHard': parseInt(depthLimitHardEl.val(), 10)
+                }
+            });
+
+            game.move(result.history[0]);
+            board.position(game.generateFen());
+            updateBoardStatus();
+        })
+        .catch((err) => {
+            consoleEl.html(`
+                Error: <br/>
+                ${err.message}
+            `);
+        });
+
+    return true;
+}
+
+
+function updateBoardStatus() {
+    var status = '';
+    var moveColor = 'White';
+    if (game.turn === 'b') {
+        moveColor = 'Black';
+    }
+
+    // checkmate?
+    if (game.isCheckmate() === true) {
+        status = 'Game over, ' + moveColor + ' is in checkmate.';
+    }
+
+    // draw?
+    else if (game.isDraw() === true) {
+        status = 'Game over, drawn position';
+    }
+
+    // game still on
+    else {
+        status = moveColor + ' to move';
+
+        // check?
+        if (game.isCheck() === true) {
+            status += ', ' + moveColor + ' is in check';
+        }
+    }
+
+    statusEl.html(status);
+    fenEl.val(game.generateFen());
+
+    if (game.turn == 'w' && autopilotWhiteCheckboxEl[0].checked) {
+        autopilot();
+    } else if (game.turn == 'b' && autopilotBlackCheckboxEl[0].checked) {
+        autopilot();
+    }
+};
+
+function createBoard() {
+    board = ChessBoard('board', {
+        draggable: true,
+        // position: 'start',
+        onDragStart: function (source, piece, position, orientation) {
+            return true;
+        },
+        onDrop: function (source, target) {
+            const color = game.turn;
+
+            // see if the move is legal
+            var move = game.move_({
+                from: Chess2.SQUARES[source],
+                to: Chess2.SQUARES[target],
+                promotion: 'q' // NOTE: always promote to a queen for example simplicity
+            });
+
+            // illegal move
+            if (!move) {
+                window.Countly.add_event({
+                    'key': 'user_illegal_move',
+                    'count': 1,
+                    'segmentation': {
+                        'color': color
+                    }
+                });
+                return 'snapback';
+            }
+
+            window.Countly.add_event({
+                'key': 'user_move',
+                'count': 1,
+                'segmentation': {
+                    'color': color
+                }
+            });
+
+            updateBoardStatus();
+        },
+        onSnapEnd: function () {
+            board.position(game.generateFen());
+        },
+        pieceTheme: function(piece) {
+            return chesspieces[piece];
+        }
+    });
+
+    board.position(game.generateFen());
+};
+
+
+loadFenButtonEl.click(function() {
+    var fen = prompt('FEN Notation');
+    if (!game.loadFen(fen)) return;
+    board.position(fen);
+    updateBoardStatus();
+
+    window.Countly.add_event({
+        'key': 'fen_loaded',
+        'count': 1,
+        'segmentation': {
+            'color': game.turn,
+            'depthLimitSoft': parseInt(depthLimitSoftEl.val(), 10),
+            'depthLimitHard': parseInt(depthLimitHardEl.val(), 10)
+        }
+    });
+});
+
+
+resetButtonEl.click(function() {
+    game.reset();
+    board.position(game.generateFen());
+    updateBoardStatus();
+
+    window.Countly.add_event({
+        'key': 'reset_clicked',
+        'count': 1,
+        'segmentation': {}
+    });
+});
+
+evalButtonEl.click(function() {
+    window.Countly.add_event({
+        'key': 'eval_clicked',
+        'count': 1,
+        'segmentation': {
+            'color': game.turn,
+            'depthLimitSoft': parseInt(depthLimitSoftEl.val(), 10),
+            'depthLimitHard': parseInt(depthLimitHardEl.val(), 10)
+        }
+    });
+
+    eval_();
+});
+
+searchButtonEl.click(function() {
+    window.Countly.add_event({
+        'key': 'search_clicked',
+        'count': 1,
+        'segmentation': {
+            'color': game.turn,
+            'depthLimitSoft': parseInt(depthLimitSoftEl.val(), 10),
+            'depthLimitHard': parseInt(depthLimitHardEl.val(), 10)
+        }
+    });
+
+    search();
+});
+
+undoButtonEl.click(function() {
+    game.undo();
+    board.position(game.generateFen());
+    updateBoardStatus();
+
+    window.Countly.add_event({
+        'key': 'undo_clicked',
+        'count': 1,
+        'segmentation': {}
+    });
+});
+
+autopilotWhiteCheckboxEl.change(function() {
+    if (game.turn == 'w' && autopilotWhiteCheckboxEl[0].checked) {
+        autopilot();
+    }
+});
+
+autopilotBlackCheckboxEl.change(function() {
+    if (game.turn == 'b' && autopilotBlackCheckboxEl[0].checked) {
+        autopilot();
+    }
+});
+
+const redrawBoard = _.debounce(() => {
+    board.resize();
+}, 500);
+
+redrawBoardButtonEl.click(redrawBoard);
+window.addEventListener('resize', redrawBoard, false);
+window.addEventListener('orientationchange', redrawBoard, false);
+
+loadWacButtonEl.click(function() {
+    var index = prompt('Enter puzzle number from WAC 300?');
+    var puzzle = wac300[parseInt(index, 10)];
+    if (!puzzle) return console.log(`Puzzle not found`);
+    if (!game.loadFen(puzzle.fen)) return console.log('Could not load fen');
+    board.position(puzzle.fen);
+    updateBoardStatus();
+    consoleEl.text('Best move: ' + puzzle.result);
+
+    window.Countly.add_event({
+        'key': 'wac300_loaded',
+        'count': 1,
+        'segmentation': {
+            'index': index
+        }
+    });
+});
+
+
+/**
+ * Start
+ */
+createBoard();
+updateBoardStatus();

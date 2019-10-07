@@ -1,3 +1,7 @@
+const _ = require('lodash');
+const Chess2 = require('./chess2');
+
+
 const PIECE_VALUES = {
     k: 0,
     q: 975,
