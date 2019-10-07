@@ -12,13 +12,13 @@ Avaliable on: [https://deniz.co/chess-ai/](https://deniz.co/chess-ai/)
 
 - Search: Traditional minimax with alpha-beta and node ordering. Also un-even tree generation.
 - Evaluation features:
-    - Piece values
-    - Piece value adjustments
-    - Piece square tables
-    - King's shield
-    - Blockages
-    - Safe mobility
-    - Attack count&weight
+    - [Piece values](https://www.chessprogramming.org/Point_Value#Basic_values)
+    - [Piece value adjustments](https://www.chessprogramming.org/Material#Other_Material_Considerations)
+    - [Piece square tables](https://www.chessprogramming.org/Piece-Square_Tables)
+    - [King's shield](https://www.chessprogramming.org/King_Safety)
+    - [Blockages](https://www.chessprogramming.org/Trapped_Pieces)
+    - [Safe mobility](https://www.chessprogramming.org/Mobility#Safe_Mobility)
+    - [Attack count&weight](https://www.chessprogramming.org/King_Safety#Attacking_King_Zone)
 
 ## Setup
 
@@ -44,4 +44,4 @@ Special thanks to these projects that help me a lot in this.
 
 - [Chess.js](https://github.com/jhlywa/chess.js)
 - [Chessboard.js](http://chessboardjs.com/)
-- [CPW](https://chessprogramming.wikispaces.com/)
+- [CPW](https://www.chessprogramming.org/Main_Page)
