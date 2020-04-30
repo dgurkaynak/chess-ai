@@ -21,7 +21,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
     "chessboardjs": "^0.0.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "lodash": "^4.17.15",
     "parcel-bundler": "^1.12.4"
   }
