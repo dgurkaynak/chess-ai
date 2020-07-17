@@ -22,7 +22,7 @@
     "@babel/polyfill": "^7.6.0",
     "chessboardjs": "^0.0.1",
     "jquery": "^3.4.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "parcel-bundler": "^1.12.4"
   }
 }
