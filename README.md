@@ -2,7 +2,7 @@
 
 Medium strength Chess AI implementation in JavaScript.
 
-Avaliable on: [https://deniz.co/chess-ai/](https://deniz.co/chess-ai/)
+Available on: [https://deniz.co/chess-ai/](https://deniz.co/chess-ai/)
 
 [![Demo](./demo.gif)](https://deniz.co/chess-ai/)
 
