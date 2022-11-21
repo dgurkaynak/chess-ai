@@ -6,7 +6,7 @@ Available on: [https://deniz.co/chess-ai/](https://deniz.co/chess-ai/)
 
 [![Demo](./demo.gif)](https://deniz.co/chess-ai/)
 
-[Presentation](https://drive.google.com/file/d/0B0RFeAd0sIc6MjZWVGl4QS1nOXM/view?usp=sharing) | [Project Report](https://drive.google.com/file/d/0B0RFeAd0sIc6RzNOaHhRUFdCTnc/view?usp=sharing)
+[Presentation](https://docs.google.com/presentation/d/0B0RFeAd0sIc6MjZWVGl4QS1nOXM/edit?usp=sharing&ouid=100564047032313877516&resourcekey=0-V7NSA6HjNHRjoazid7WxAg&rtpof=true&sd=true) | [Project Report](https://drive.google.com/file/d/0B0RFeAd0sIc6RzNOaHhRUFdCTnc/view?usp=sharing&resourcekey=0-BBCHIfowrM9p4eD0uki44Q)
 
 ## Method overview
 
