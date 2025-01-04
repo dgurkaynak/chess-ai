@@ -413,16 +413,6 @@ function autopilot() {
 
     search()
         .then((result) => {
-            window.Countly.add_event({
-                'key': 'autopilot_move',
-                'count': 1,
-                'segmentation': {
-                    'color': game.turn,
-                    'depthLimitSoft': parseInt(depthLimitSoftEl.val(), 10),
-                    'depthLimitHard': parseInt(depthLimitHardEl.val(), 10)
-                }
-            });
-
             game.move(result.history[0]);
             board.position(game.generateFen());
             updateBoardStatus();
@@ -494,23 +484,8 @@ function createBoard() {
 
             // illegal move
             if (!move) {
-                window.Countly.add_event({
-                    'key': 'user_illegal_move',
-                    'count': 1,
-                    'segmentation': {
-                        'color': color
-                    }
-                });
                 return 'snapback';
             }
-
-            window.Countly.add_event({
-                'key': 'user_move',
-                'count': 1,
-                'segmentation': {
-                    'color': color
-                }
-            });
 
             updateBoardStatus();
         },
@@ -531,16 +506,6 @@ loadFenButtonEl.click(function() {
     if (!game.loadFen(fen)) return;
     board.position(fen);
     updateBoardStatus();
-
-    window.Countly.add_event({
-        'key': 'fen_loaded',
-        'count': 1,
-        'segmentation': {
-            'color': game.turn,
-            'depthLimitSoft': parseInt(depthLimitSoftEl.val(), 10),
-            'depthLimitHard': parseInt(depthLimitHardEl.val(), 10)
-        }
-    });
 });
 
 
@@ -548,39 +513,13 @@ resetButtonEl.click(function() {
     game.reset();
     board.position(game.generateFen());
     updateBoardStatus();
-
-    window.Countly.add_event({
-        'key': 'reset_clicked',
-        'count': 1,
-        'segmentation': {}
-    });
 });
 
 evalButtonEl.click(function() {
-    window.Countly.add_event({
-        'key': 'eval_clicked',
-        'count': 1,
-        'segmentation': {
-            'color': game.turn,
-            'depthLimitSoft': parseInt(depthLimitSoftEl.val(), 10),
-            'depthLimitHard': parseInt(depthLimitHardEl.val(), 10)
-        }
-    });
-
     eval_();
 });
 
 searchButtonEl.click(function() {
-    window.Countly.add_event({
-        'key': 'search_clicked',
-        'count': 1,
-        'segmentation': {
-            'color': game.turn,
-            'depthLimitSoft': parseInt(depthLimitSoftEl.val(), 10),
-            'depthLimitHard': parseInt(depthLimitHardEl.val(), 10)
-        }
-    });
-
     search();
 });
 
@@ -588,12 +527,6 @@ undoButtonEl.click(function() {
     game.undo();
     board.position(game.generateFen());
     updateBoardStatus();
-
-    window.Countly.add_event({
-        'key': 'undo_clicked',
-        'count': 1,
-        'segmentation': {}
-    });
 });
 
 autopilotWhiteCheckboxEl.change(function() {
@@ -624,14 +557,6 @@ loadWacButtonEl.click(function() {
     board.position(puzzle.fen);
     updateBoardStatus();
     consoleEl.text('Best move: ' + puzzle.result);
-
-    window.Countly.add_event({
-        'key': 'wac300_loaded',
-        'count': 1,
-        'segmentation': {
-            'index': index
-        }
-    });
 });
 
 
